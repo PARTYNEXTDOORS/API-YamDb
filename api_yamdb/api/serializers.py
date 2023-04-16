@@ -1,7 +1,8 @@
 from rest_framework import serializers
+
 import datetime
 
-from reviews.models import Title, Category, Genre, User
+from reviews.models import Title, Category, Genre, User, Review, Comment
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -32,7 +33,7 @@ class TitleCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fileds = '__all__'
+        fields = '__all__'
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
@@ -50,6 +51,37 @@ class TitleReadSerializer(serializers.ModelSerializer):
         if value > year:
             raise serializers.ValidationError('Проверьте год выпука!')
         return value
+        
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username',
+    )
+    review = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='text',
+    )
+
+    class Meta:
+        fields = '__all__'
+        model = Comment
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    title = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='name'
+    )
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username'
+    )
+
+    class Meta:
+        fields = '__all__'
+        model = Review
+        fileds = '__all__'
 
 
 class TokenSerializer(serializers.Serializer):
