@@ -42,3 +42,60 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
+
+
+class Genre(models.Model):
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Название жанра',
+    )
+    slug = models.SlugField(
+        max_length=50,
+        unique=True,
+        verbose_name='Слаг жанра',
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class Category(models.Model):
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Название категории',
+    )
+    slug = models.SlugField(
+        max_length=50,
+        unique=True,
+        verbose_name='Слаг категории',
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class Title(models.Model):
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Название произведения',
+    )
+    year = models.IntegerField(
+        verbose_name='Год выпуска',
+    )
+    genre = models.ManyToManyField(
+        Genre,
+        related_name='title',
+        verbose_name='Жанр',
+    )
+    category = models.ForeignKey(
+        Category,
+        related_name='title',
+        null=True,
+        on_delete=models.SET_NULL,
+        verbose_name='Категория',
+    )
+    description = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name='Описание',
+    )

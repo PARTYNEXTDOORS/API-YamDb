@@ -1,19 +1,60 @@
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.tokens import default_token_generator
 
-
-from rest_framework import permissions, status, viewsets
-from rest_framework.filters import SearchFilter
+from django.db.models import Avg
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.filters import SearchFilter
+from rest_framework import filters, pagination, permissions, status, viewsets
+from reviews.models import Category, Genre, Title, User
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
-from .permissions import IsAdminOrAuthenticated
-from .serializers import (UserSerializer, TokenSerializer,
-                          RegistrationSerializer, UserEditSerializer)
+from .permissions import IsAdminOrReadOnly
 from .utils import confirmation_code_send_email
-from reviews.models import User
+from .filters import TitleFilter
+from .serializers import (CategorySerializer, GenreSerializer,
+                          TitleCreateSerializer, TitleReadSerializer,
+                          UserSerializer, TokenSerializer,
+                          RegistrationSerializer, UserEditSerializer)
+
+
+class GenreVewset(viewsets.ModelViewSet):
+    """Вьюсет для работы с Жанрами"""
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
+
+class CategoryVewset(viewsets.ModelViewSet):
+    """Вьюсет для работы с Категориями"""
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
+
+class TitleVewset(viewsets.ModelViewSet):
+    """Вьюсет для работы с произведениями"""
+    queryset = Title.objects.order_by('id').annotate(
+        rating=Avg('reviews__score')
+    )
+    serializer_class = TitleCreateSerializer
+    pagination_class = pagination.LimitOffsetPagination
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return TitleReadSerializer
+        return TitleCreateSerializer
 
 
 @api_view(['POST'])
