@@ -31,10 +31,6 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ['-id']
-        constraints = [
-            models.UniqueConstraint(
-                fields=['username', 'email'], name='unique_user')
-        ]
 
     @property
     def is_moderator(self):

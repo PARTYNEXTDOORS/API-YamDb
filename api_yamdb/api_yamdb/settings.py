@@ -1,3 +1,5 @@
+import os
+
 from pathlib import Path
 
 from datetime import timedelta
@@ -23,6 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'reviews.apps.ReviewsConfig',
+    'api.apps.ApiConfig',
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
@@ -109,12 +113,21 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
+
 AUTH_USER_MODEL = 'reviews.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
+
+AUTH_USER_MODEL = 'reviews.User'
+
+REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
@@ -124,7 +137,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.'
                                 'PageNumberPagination',
     "PAGE_SIZE": 10,
-
 }
 
 SIMPLE_JWT = {
