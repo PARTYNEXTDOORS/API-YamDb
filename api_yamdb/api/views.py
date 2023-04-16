@@ -11,7 +11,8 @@ from reviews.models import Category, Genre, Title, User, Review
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
-from .permissions import IsAdminOrReadOnly
+from .permissions import IsAdminOrReadOnly, IsAdminOrAuthenticated
+from .mixins import ModelMixinSet
 from .utils import confirmation_code_send_email
 from .filters import TitleFilter
 from .serializers import (CategorySerializer, GenreSerializer,
@@ -21,7 +22,7 @@ from .serializers import (CategorySerializer, GenreSerializer,
                           CommentSerializer, ReviewSerializer)
 
 
-class GenreVewset(viewsets.ModelViewSet):
+class GenreVewset(ModelMixinSet):
     """Вьюсет для работы с Жанрами"""
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
@@ -31,7 +32,7 @@ class GenreVewset(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class CategoryVewset(viewsets.ModelViewSet):
+class CategoryVewset(ModelMixinSet):
     """Вьюсет для работы с Категориями"""
     queryset = Category.objects.all()
     serializer_class = CategorySerializer

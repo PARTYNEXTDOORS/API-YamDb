@@ -50,20 +50,6 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username']
 
 
-
-class Category(models.Model):
-    name = models.CharField(
-        max_length=50
-    )
-    slug = models.SlugField()
-
-
-class Genre(models.Model):
-    name = models.CharField(
-        max_length=50
-    )
-    slug = models.SlugField()
-
 class Genre(models.Model):
     name = models.CharField(
         max_length=256,
@@ -109,7 +95,7 @@ class Title(models.Model):
         blank=True,
     )
     description = models.TextField(
-        max_length=250,
+        max_length=256,
         null=True,
         blank=True,
     )
@@ -133,7 +119,7 @@ class Review(models.Model):
         related_name='reviews',
         verbose_name='Автор'
     )
-    text = models.TextField(max_length=200),
+    text = models.TextField(max_length=256),
     score = models.IntegerField(
         validators=(
             MinValueValidator(1),
@@ -167,25 +153,4 @@ class Comment(models.Model):
         auto_now_add=True,
         db_index=True,
         max_length=256,
-        verbose_name='Название произведения',
-    )
-    year = models.IntegerField(
-        verbose_name='Год выпуска',
-    )
-    genre = models.ManyToManyField(
-        Genre,
-        related_name='title',
-        verbose_name='Жанр',
-    )
-    category = models.ForeignKey(
-        Category,
-        related_name='title',
-        null=True,
-        on_delete=models.SET_NULL,
-        verbose_name='Категория',
-    )
-    description = models.TextField(
-        null=True,
-        blank=True,
-        verbose_name='Описание',
     )

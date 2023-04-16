@@ -10,6 +10,7 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         exlude = 'id'
+        fields = ('__all__')
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -17,6 +18,7 @@ class CategorySerializer(serializers.ModelSerializer):
     class Mets:
         model = Category
         exlude = 'id'
+        fields = ('__all__')
 
 
 class TitleCreateSerializer(serializers.ModelSerializer):
@@ -51,7 +53,7 @@ class TitleReadSerializer(serializers.ModelSerializer):
         if value > year:
             raise serializers.ValidationError('Проверьте год выпука!')
         return value
-        
+
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
@@ -81,12 +83,15 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Review
-        fileds = '__all__'
 
 
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField()
     confirmation_code = serializers.CharField()
+
+    class Meta:
+        model = User
+        fields = ('username', 'confirmations_code')
 
 
 class UserSerializer(serializers.ModelSerializer):
