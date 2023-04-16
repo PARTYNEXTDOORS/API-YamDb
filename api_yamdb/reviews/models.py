@@ -55,6 +55,7 @@ class Genre(models.Model):
     )
     slug = models.SlugField(
         max_length=50,
+        unique=True,
         verbose_name='Слаг жанра',
     )
 
@@ -69,6 +70,7 @@ class Category(models.Model):
     )
     slug = models.SlugField(
         max_length=50,
+        unique=True,
         verbose_name='Слаг категории',
     )
 
@@ -86,31 +88,18 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(
         Genre,
-        through='GenreTitle',
+        related_name='title',
         verbose_name='Жанр',
     )
     category = models.ForeignKey(
         Category,
+        related_name='title',
         null=True,
         on_delete=models.SET_NULL,
         verbose_name='Категория',
     )
     description = models.TextField(
-        null=True, blank=True,
+        null=True,
+        blank=True,
         verbose_name='Описание',
     )
-
-
-class GenreTitle(models.Model):
-    genre = models.ForeignKey(
-        Genre,
-        null=True,
-        on_delete=models.SET_NULL,
-    )
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-    )
-
-    def __str__(self):
-        return f'{self.genre}: {self.title}'
