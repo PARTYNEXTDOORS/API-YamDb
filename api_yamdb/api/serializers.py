@@ -15,7 +15,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор для Категорий"""
-    class Mets:
+    class Meta:
         model = Category
         exlude = 'id'
         fields = ('__all__')
@@ -51,7 +51,8 @@ class TitleReadSerializer(serializers.ModelSerializer):
     def validate_year(self, value):
         year = datetime.date.today().year
         if value > year:
-            raise serializers.ValidationError('Проверьте год выпука!')
+            raise serializers.ValidationError(
+                'Проверьте год выпука!')
         return value
 
 

@@ -7,7 +7,7 @@ from .views import (GenreVewset, CategoryVewset, TitleVewset,
 
 router_v1 = routers.DefaultRouter()
 router_v1.register('genres', GenreVewset, basename='genre')
-router_v1.register('categorys', CategoryVewset, basename='category')
+router_v1.register('categories', CategoryVewset, basename='category')
 router_v1.register('titles', TitleVewset, basename='title')
 router_v1.register('users', UserViewSet, basename='users')
 router_v1.register(
