@@ -11,7 +11,7 @@ router_v1.register('categories', CategoryVewset, basename='category')
 router_v1.register('titles', TitleVewset, basename='title')
 router_v1.register('users', UserViewSet, basename='users')
 router_v1.register(
-    r'title/(?P<title_id>\d+)/reviews',
+    r'titles/(?P<title_id>\d+)/reviews',
     ReviewViewSet,
     basename='reviews'
 )

@@ -37,7 +37,6 @@ class User(AbstractUser):
                 fields=['username', 'email'], name='unique_user')
         ]
 
-
     @property
     def is_moderator(self):
         return self.role == self.MODERATOR
@@ -61,6 +60,9 @@ class Genre(models.Model):
         verbose_name='Слаг жанра',
     )
 
+    class Meta:
+        ordering = ['-id']
+
     def __str__(self):
         return self.name
 
@@ -79,6 +81,8 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['-id']
 
 
 class Title(models.Model):
@@ -133,6 +137,9 @@ class Review(models.Model):
         db_index=True,
     )
 
+    class Meta:
+        ordering = ['-id']
+
 
 class Comment(models.Model):
     author = models.ForeignKey(
@@ -154,3 +161,6 @@ class Comment(models.Model):
         db_index=True,
         max_length=256,
     )
+
+    class Meta:
+        ordering = ['-id']

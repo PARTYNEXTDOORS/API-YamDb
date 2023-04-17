@@ -10,7 +10,7 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         exlude = 'id'
-        fields = ('__all__')
+        fields = ('name', 'slug')
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -18,7 +18,7 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         exlude = 'id'
-        fields = ('__all__')
+        fields = ('name', 'slug')
 
 
 class TitleCreateSerializer(serializers.ModelSerializer):
@@ -35,7 +35,7 @@ class TitleCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = '__all__'
+        fields = ('__all__')
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
@@ -61,13 +61,9 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='username',
     )
-    review = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='text',
-    )
 
     class Meta:
-        fields = '__all__'
+        fields = ('id', 'text', 'author', 'pub_date')
         model = Comment
 
 

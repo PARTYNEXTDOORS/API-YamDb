@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.filters import SearchFilter
-from rest_framework import filters, pagination, permissions, status, viewsets
+from rest_framework import filters, permissions, status, viewsets
 from reviews.models import Category, Genre, Title, User, Review
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
@@ -48,7 +48,7 @@ class TitleVewset(viewsets.ModelViewSet):
         rating=Avg('reviews__score')
     )
     serializer_class = TitleCreateSerializer
-    pagination_class = pagination.LimitOffsetPagination
+    pagination_class = PageNumberPagination
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
@@ -126,6 +126,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    pagination_class = PageNumberPagination
 
     def get_queryset(self):
         review = get_object_or_404(
@@ -143,11 +144,11 @@ class CommentViewSet(viewsets.ModelViewSet):
             author=self.request.user,
             review=review
         )
-        return serializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
+    pagination_class = PageNumberPagination
 
     def get_queryset(self):
         title = get_object_or_404(
@@ -165,4 +166,3 @@ class ReviewViewSet(viewsets.ModelViewSet):
             author=self.request.user,
             title=title
         )
-        return serializer
