@@ -6,12 +6,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.filters import SearchFilter
-from rest_framework import filters, permissions, status, viewsets
+from rest_framework import filters, pagination, permissions, status, viewsets
 from reviews.models import Category, Genre, Title, User, Review
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
-from .permissions import IsAdminOrReadOnly, IsAdminOrAuthenticated
+from .permissions import (IsAdminOrReadOnly,
+                          IsAdminOrAuthenticated,
+                          AuthorAndAndimOrReadOnly)
 from .mixins import ModelMixinSet
 from .utils import confirmation_code_send_email
 from .filters import TitleFilter
@@ -48,7 +50,7 @@ class TitleVewset(viewsets.ModelViewSet):
         rating=Avg('reviews__score')
     )
     serializer_class = TitleCreateSerializer
-    pagination_class = PageNumberPagination
+    pagination_class = pagination.LimitOffsetPagination
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
@@ -102,7 +104,7 @@ class UserViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     permission_classes = (IsAdminOrAuthenticated,)
 
-    @action(methods=['get', 'patch',], detail=False, url_path='me',
+    @action(methods=['get', 'patch', ], detail=False, url_path='me',
             permission_classes=[permissions.IsAuthenticated],
             serializer_class=UserEditSerializer,
             )
@@ -127,6 +129,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     pagination_class = PageNumberPagination
+    permission_classes = [AuthorAndAndimOrReadOnly, ]
 
     def get_queryset(self):
         review = get_object_or_404(
@@ -140,15 +143,13 @@ class CommentViewSet(viewsets.ModelViewSet):
             Review,
             id=self.kwargs.get('review_id')
         )
-        serializer = serializer.save(
-            author=self.request.user,
-            review=review
-        )
+        serializer.save(author=self.request.user, review=review)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     pagination_class = PageNumberPagination
+    permission_classes = [AuthorAndAndimOrReadOnly, ]
 
     def get_queryset(self):
         title = get_object_or_404(
@@ -162,7 +163,4 @@ class ReviewViewSet(viewsets.ModelViewSet):
             Title,
             id=self.kwargs.get('title_id')
         )
-        serializer = serializer.save(
-            author=self.request.user,
-            title=title
-        )
+        serializer.save(author=self.request.user, title=title)

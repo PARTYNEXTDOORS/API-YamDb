@@ -60,11 +60,11 @@ class Genre(models.Model):
         verbose_name='Слаг жанра',
     )
 
-    class Meta:
-        ordering = ['-id']
-
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ['-id']
 
 
 class Category(models.Model):
@@ -109,6 +109,9 @@ class Title(models.Model):
         verbose_name='Жанр',
     )
 
+    class Meta:
+        ordering = ['-id']
+
 
 class Review(models.Model):
     title = models.ForeignKey(
@@ -123,7 +126,7 @@ class Review(models.Model):
         related_name='reviews',
         verbose_name='Автор'
     )
-    text = models.TextField(max_length=256),
+    text = models.CharField(max_length=256)
     score = models.IntegerField(
         validators=(
             MinValueValidator(1),
@@ -139,6 +142,11 @@ class Review(models.Model):
 
     class Meta:
         ordering = ['-id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=('title', 'author'),
+                name='unique reviews'
+            )]
 
 
 class Comment(models.Model):
@@ -148,7 +156,7 @@ class Comment(models.Model):
         related_name='comments',
         verbose_name='Автор'
     )
-    text = models.TextField()
+    text = models.TextField(max_length=256)
     review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
