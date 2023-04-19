@@ -64,6 +64,7 @@ class TitleVewset(viewsets.ModelViewSet):
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def register(request):
+    """Метод регистрации пользователя и отправки проверочного кода"""
     user = User.objects.filter(username=request.data.get(
         'username'), email=request.data.get('email')).first()
     if user:

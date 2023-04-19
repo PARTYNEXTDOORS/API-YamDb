@@ -2,17 +2,17 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
+ADMIN = 'admin'
+MODERATOR = 'moderator'
+USER = 'user'
+ROLES_CHOICES = [
+    (ADMIN, 'Administrator'),
+    (MODERATOR, 'Moderator'),
+    (USER, 'User'),
+]
+
 
 class User(AbstractUser):
-    ADMIN = 'admin'
-    MODERATOR = 'moderator'
-    USER = 'user'
-    ROLES_CHOICES = [
-        (ADMIN, 'Administrator'),
-        (MODERATOR, 'Moderator'),
-        (USER, 'User'),
-    ]
-
     bio = models.TextField(
         blank=True,
         null=True,
@@ -39,11 +39,11 @@ class User(AbstractUser):
 
     @property
     def is_moderator(self):
-        return self.role == self.MODERATOR
+        return self.role == MODERATOR
 
     @property
     def is_admin(self):
-        return self.is_superuser or self.role == self.ADMIN or self.is_staff
+        return self.is_superuser or self.role == ADMIN or self.is_staff
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -89,7 +89,7 @@ class Title(models.Model):
     name = models.CharField(
         max_length=50,
     )
-    year = models.IntegerField()
+    year = models.PositiveSmallIntegerField()
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,

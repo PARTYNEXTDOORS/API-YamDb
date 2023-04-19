@@ -1,9 +1,9 @@
-from rest_framework import serializers
-from django.shortcuts import get_object_or_404
-
 import datetime
 
-from reviews.models import Title, Category, Genre, User, Review, Comment
+from django.shortcuts import get_object_or_404
+from rest_framework import serializers
+
+from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -52,7 +52,8 @@ class TitleReadSerializer(serializers.ModelSerializer):
         year = datetime.date.today().year
         if value > year:
             raise serializers.ValidationError(
-                'Проверьте год выпука!')
+                'Проверьте год выпука!'
+            )
         return value
 
 
@@ -78,7 +79,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = ('__all__')
+        fields = '__all__'
         model = Review
 
     def validate(self, data):
