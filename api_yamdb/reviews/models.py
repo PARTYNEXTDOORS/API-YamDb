@@ -2,16 +2,17 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
+ADMIN = 'admin'
+MODERATOR = 'moderator'
+USER = 'user'
+ROLES_CHOICES = [
+    (ADMIN, 'Administrator'),
+    (MODERATOR, 'Moderator'),
+    (USER, 'User'),
+]
+
 
 class User(AbstractUser):
-    ADMIN = 'admin'
-    MODERATOR = 'moderator'
-    USER = 'user'
-    ROLES_CHOICES = [
-        (ADMIN, 'Administrator'),
-        (MODERATOR, 'Moderator'),
-        (USER, 'User'),
-    ]
 
     bio = models.TextField(
         blank=True,
@@ -39,17 +40,18 @@ class User(AbstractUser):
 
     @property
     def is_moderator(self):
-        return self.role == self.MODERATOR
+        return self.role == MODERATOR
 
     @property
     def is_admin(self):
-        return self.is_superuser or self.role == self.ADMIN or self.is_staff
+        return self.is_superuser or self.role == ADMIN or self.is_staff
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
 
 class Genre(models.Model):
+
     name = models.CharField(
         max_length=256,
         verbose_name='Название жанра',
@@ -68,6 +70,7 @@ class Genre(models.Model):
 
 
 class Category(models.Model):
+
     name = models.CharField(
         max_length=256,
         verbose_name='Название категории',
@@ -86,10 +89,11 @@ class Category(models.Model):
 
 
 class Title(models.Model):
+
     name = models.CharField(
         max_length=50,
     )
-    year = models.IntegerField()
+    year = models.PositiveSmallIntegerField()
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -114,6 +118,7 @@ class Title(models.Model):
 
 
 class Review(models.Model):
+
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
@@ -150,6 +155,7 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
+
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

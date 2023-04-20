@@ -2,7 +2,6 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
 class IsAdminOrReadOnly(BasePermission):
-    """Проверка прав администратора"""
 
     def has_permission(self, request, view):
         return (
@@ -13,12 +12,14 @@ class IsAdminOrReadOnly(BasePermission):
 
 
 class IsAdminOrAuthenticated(BasePermission):
+
     def has_permission(self, request, view):
         return request.user.is_authenticated and (
             request.user.is_admin or request.user.is_superuser)
 
 
 class AuthorAndAndimOrReadOnly(BasePermission):
+
     def has_permission(self, request, view):
         return request.method != 'POST' or request.user.is_authenticated
 

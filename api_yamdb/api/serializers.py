@@ -1,27 +1,27 @@
-from rest_framework import serializers
-from django.shortcuts import get_object_or_404
-
 import datetime
 
-from reviews.models import Title, Category, Genre, User, Review, Comment
+from django.shortcuts import get_object_or_404
+from rest_framework import serializers
+
+from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    """Сериализатор для Жанров"""
+
     class Meta:
         model = Genre
         fields = ('name', 'slug')
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    """Сериализатор для Категорий"""
+
     class Meta:
         model = Category
         fields = ('name', 'slug')
 
 
 class TitleCreateSerializer(serializers.ModelSerializer):
-    """Сериализатор для Произведений(Create)"""
+
     genre = serializers.SlugRelatedField(
         many=True,
         slug_field='slug',
@@ -38,7 +38,7 @@ class TitleCreateSerializer(serializers.ModelSerializer):
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
-    """Сериализатор для Произведений(Read)"""
+
     genre = GenreSerializer(read_only=True, many=True,)
     category = CategorySerializer(read_only=True,)
     rating = serializers.IntegerField(read_only=True,)
@@ -49,14 +49,17 @@ class TitleReadSerializer(serializers.ModelSerializer):
         model = Title
 
     def validate_year(self, value):
+        """Валидация max значения year"""
         year = datetime.date.today().year
         if value > year:
             raise serializers.ValidationError(
-                'Проверьте год выпука!')
+                'Проверьте год выпука!'
+            )
         return value
 
 
 class CommentSerializer(serializers.ModelSerializer):
+
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username',
@@ -68,6 +71,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+
     title = serializers.SlugRelatedField(
         read_only=True,
         slug_field='name'
@@ -78,10 +82,11 @@ class ReviewSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = ('__all__')
+        fields = '__all__'
         model = Review
 
     def validate(self, data):
+        """Валидация на создание двух отзывов одним user"""
         request = self.context['request']
         author = request.user
         title_id = self.context.get('view').kwargs.get('title_id')
@@ -96,6 +101,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class TokenSerializer(serializers.Serializer):
+
     username = serializers.CharField()
     confirmation_code = serializers.CharField()
 
@@ -113,6 +119,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserEditSerializer(serializers.ModelSerializer):
+
     class Meta:
         fields = ('username', 'email', 'first_name',
                   'last_name', 'bio', 'role')
@@ -127,6 +134,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         model = User
 
     def validate_username(self, name):
+        """Валидация name на значение me"""
         if name.lower() == 'me':
             raise serializers.ValidationError(
                 'Нельзя использовать имя "me".'
