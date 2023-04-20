@@ -25,7 +25,7 @@ from .serializers import (CategorySerializer, GenreSerializer,
 
 
 class GenreVewset(ModelMixinSet):
-    """Вьюсет для работы с Жанрами"""
+
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (IsAdminOrReadOnly,)
@@ -35,7 +35,7 @@ class GenreVewset(ModelMixinSet):
 
 
 class CategoryVewset(ModelMixinSet):
-    """Вьюсет для работы с Категориями"""
+
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
@@ -45,7 +45,7 @@ class CategoryVewset(ModelMixinSet):
 
 
 class TitleVewset(viewsets.ModelViewSet):
-    """Вьюсет для работы с произведениями"""
+
     queryset = Title.objects.order_by('id').annotate(
         rating=Avg('reviews__score')
     )
@@ -81,6 +81,7 @@ def register(request):
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def get_token(request):
+    """Метод получения и проверки токена"""
     serializer = TokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user = get_object_or_404(
@@ -96,6 +97,7 @@ def get_token(request):
 
 
 class UserViewSet(viewsets.ModelViewSet):
+
     lookup_field = "username"
     queryset = User.objects.all()
     http_method_names = ('get', 'patch', 'delete', 'post',)
@@ -110,6 +112,7 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer_class=UserEditSerializer,
             )
     def profile_users(self, request):
+        """Метод проверки GET и PATCH запроса user"""
         user = request.user
         if request.method == 'GET':
             serializer = self.get_serializer(user)
@@ -128,6 +131,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
+
     serializer_class = CommentSerializer
     pagination_class = PageNumberPagination
     permission_classes = [AuthorAndAndimOrReadOnly, ]
@@ -148,6 +152,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
+
     serializer_class = ReviewSerializer
     pagination_class = PageNumberPagination
     permission_classes = [AuthorAndAndimOrReadOnly, ]
