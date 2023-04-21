@@ -1,4 +1,7 @@
+import datetime
+
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -10,6 +13,16 @@ ROLES_CHOICES = [
     (MODERATOR, 'Moderator'),
     (USER, 'User'),
 ]
+
+
+def validate_year(value):
+    """Валидация max значения year"""
+    year = datetime.date.today().year
+    if value > year:
+        raise ValidationError(
+            'Проверьте год выпука!'
+        )
+    return value
 
 
 class User(AbstractUser):
@@ -93,7 +106,7 @@ class Title(models.Model):
     name = models.CharField(
         max_length=50,
     )
-    year = models.PositiveSmallIntegerField()
+    year = models.PositiveSmallIntegerField(validators=[validate_year])
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
